@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gardiennage de quartier</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Concept : une page de quartier, claire et rassurante. Accroche à gauche, tarifs en vue, calendrier à côté du formulaire. Jaune soleil sur bleu encre. */
+:root {
+  --bg: #f4f7f9;
+  --surface: #ffffff;
+  --ink: #14304a;
+  --muted: #566b7d;
+  --line: #d6e0e7;
+  --brand: #1f6f8b;
+  --accent: #f2b632;
+  --on-accent: #14304a;
+  --ok: #2e7d4f;
+  --warn: #b4532a;
+  --soft: #e6eef3;
+  color-scheme: light;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1c27; --surface: #172a3a; --ink: #e8f0f6; --muted: #9db3c4; --line: #27415a;
+    --brand: #6cc0dc; --accent: #f2b632; --on-accent: #14304a; --ok: #6fcf97; --warn: #f2a07a; --soft: #1e3347;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1c27; --surface: #172a3a; --ink: #e8f0f6; --muted: #9db3c4; --line: #27415a;
+  --brand: #6cc0dc; --accent: #f2b632; --on-accent: #14304a; --ok: #6fcf97; --warn: #f2a07a; --soft: #1e3347;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 800; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--brand); }
+.eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+section { padding-block: 40px 8px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 14px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; }
+.topbar nav { display: flex; gap: 16px; font-weight: 500; flex-wrap: wrap; }
+.topbar nav a { text-decoration: none; color: var(--ink); }
+.topbar nav a:hover { color: var(--brand); }
+.hero { display: grid; grid-template-columns: 1.25fr .75fr; gap: 32px; align-items: center; padding-block: 28px 8px; }
+.hero h1 { font-size: clamp(2.3rem, 6.4vw, 4rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 mark { background: linear-gradient(transparent 62%, var(--accent) 62%); color: inherit; padding: 0 .1em; }
+.hero p.lead { font-size: 1.15rem; color: var(--muted); margin-top: 16px; max-width: 34em; }
+.actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.btn { font: inherit; font-weight: 600; border: 2px solid var(--ink); background: transparent; color: var(--ink); padding: 10px 20px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn:hover { background: var(--soft); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(.96); }
+.btn.small { padding: 6px 12px; font-size: .9rem; border-width: 1.5px; }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .day:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.rates { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+.rates dl { margin: 12px 0 0; display: grid; gap: 10px; }
+.rates dl div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+.rates dl div:last-child { border-bottom: 0; padding-bottom: 0; }
+.rates dt { color: var(--muted); }
+.rates dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.big { font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; line-height: 1; }
+.big small { font-size: 1rem; font-weight: 500; color: var(--muted); font-family: var(--font-body); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 16px; }
+.two > * { min-width: 0; }
+ul.list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+ul.list li { padding-left: 26px; position: relative; }
+ul.list li::before { content: ""; position: absolute; left: 4px; top: .6em; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.book { display: grid; grid-template-columns: 340px 1fr; gap: 32px; margin-top: 20px; align-items: start; }
+.book > * { min-width: 0; }
+.cal { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cal-head strong { font-family: var(--font-display); text-transform: capitalize; }
+.grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.dow { font-size: .75rem; color: var(--muted); font-weight: 600; padding: 4px 0; }
+.day { font: inherit; border: 1px solid transparent; background: var(--soft); color: var(--ink); border-radius: 8px; padding: 8px 0; cursor: pointer; font-variant-numeric: tabular-nums; }
+.day:hover:not(:disabled) { border-color: var(--brand); }
+.day:disabled { background: transparent; color: var(--muted); opacity: .45; cursor: default; }
+.day.taken { background: repeating-linear-gradient(135deg, var(--soft), var(--soft) 4px, var(--line) 4px, var(--line) 8px); }
+.day.sel { background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.legend { display: flex; gap: 16px; font-size: .8rem; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; background: var(--soft); border: 1px solid var(--line); }
+.legend i.t { background: repeating-linear-gradient(135deg, var(--soft), var(--soft) 3px, var(--line) 3px, var(--line) 6px); }
+.legend i.s { background: var(--accent); border-color: var(--accent); }
+.slots { margin-top: 10px; font-size: .9rem; color: var(--muted); }
+form { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 14px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.row > *, .row3 > * { min-width: 0; }
+label { display: grid; gap: 4px; font-weight: 600; font-size: .9rem; }
+label span.opt { font-weight: 400; color: var(--muted); }
+input, textarea, select { font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 8px; padding: 9px 11px; width: 100%; }
+textarea { min-height: 80px; resize: vertical; }
+.estimate { background: var(--soft); border-radius: 10px; padding: 10px 14px; font-size: .95rem; }
+.estimate b { font-variant-numeric: tabular-nums; }
+.msg { border-radius: 12px; padding: 14px 16px; border: 1px solid var(--line); background: var(--surface); }
+.msg.ok { border-color: var(--ok); }
+.msg.warn { border-color: var(--warn); }
+.msg pre { white-space: pre-wrap; word-break: break-word; font-family: var(--font-body); background: var(--bg); border-radius: 8px; padding: 10px 12px; margin: 10px 0; font-size: .92rem; }
+.err { color: var(--warn); font-size: .9rem; min-height: 1.2em; }
+.req { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; }
+.reqs { display: grid; gap: 10px; margin-top: 14px; }
+.req header { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.pill { font-size: .78rem; font-weight: 700; border-radius: 99px; padding: 2px 10px; border: 1.5px solid currentColor; white-space: nowrap; }
+.pill.attente { color: var(--brand); }
+.pill.confirmee { color: var(--ok); }
+.pill.refusee { color: var(--warn); }
+.req .meta { color: var(--muted); font-size: .92rem; }
+.req .btns { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.empty { color: var(--muted); padding: 14px 0; }
+#inbox-sec { background: var(--soft); border-radius: 20px; padding: 24px; margin-top: 40px; }
+footer { margin-top: 48px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 820px) {
+  .hero, .two, .book { grid-template-columns: 1fr; }
+  .row3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 460px) { .row, .row3 { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand" id="brand"></span>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#reserver">Réserver</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow" id="eyebrow"></p>
+      <h1 id="h1"></h1>
+      <p class="lead" id="lead"></p>
+      <div class="actions">
+        <a class="btn primary" href="#reserver">Demander une date</a>
+        <a class="btn" href="#services">Voir les services</a>
+      </div>
+    </div>
+    <aside class="rates" aria-label="Tarifs">
+      <p class="eyebrow">Tarif</p>
+      <p class="big"><span id="rate"></span><small> / heure</small></p>
+      <dl id="ratelist"></dl>
+    </aside>
+  </div>
+
+  <section id="apropos">
+    <h2>À propos</h2>
+    <div id="about" style="display:grid;gap:12px;margin-top:16px;max-width:42em"></div>
+  </section>
+
+  <section id="services">
+    <h2>Ce que je fais</h2>
+    <div class="two">
+      <div>
+        <h3>Services</h3>
+        <ul class="list" id="services-list"></ul>
+      </div>
+      <div>
+        <h3>Disponibilités</h3>
+        <ul class="list" id="dispos-list"></ul>
+        <p class="slots" id="zone-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="reserver">
+    <h2>Demander une date</h2>
+    <p style="color:var(--muted);margin-top:8px;max-width:40em">Choisis un jour dans le calendrier, remplis le formulaire et la gardienne te répond pour confirmer.</p>
+    <div class="book">
+      <div>
+        <div class="cal">
+          <div class="cal-head">
+            <button class="btn small" id="prev" type="button" aria-label="Mois précédent">←</button>
+            <strong id="month"></strong>
+            <button class="btn small" id="next" type="button" aria-label="Mois suivant">→</button>
+          </div>
+          <div class="grid7" id="cal"></div>
+          <div class="legend"><span><i></i>Libre</span><span><i class="s"></i>Ton choix</span></div>
+          <div class="slots" id="slots"></div>
+        </div>
+      </div>
+      <div>
+        <form id="form" novalidate>
+          <div class="row">
+            <label for="parent">Ton nom<input id="parent" autocomplete="name" required></label>
+            <label for="tel">Téléphone<input id="tel" type="tel" autocomplete="tel" required></label>
+          </div>
+          <div class="row3">
+            <label for="date">Date<input id="date" type="date" required></label>
+            <label for="debut">Début<input id="debut" type="time" step="900" value="18:00" required></label>
+            <label for="fin">Fin<input id="fin" type="time" step="900" value="22:00" required></label>
+          </div>
+          <div class="row">
+            <label for="enfants">Nombre d'enfants
+              <select id="enfants"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+            </label>
+            <label for="ages">Âges<input id="ages" placeholder="ex. 3 ans et 6 ans" required></label>
+          </div>
+          <label for="notes">Notes <span class="opt">(allergies, routine du dodo, adresse)</span><textarea id="notes"></textarea></label>
+          <input type="text" id="gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+          <div class="estimate" id="estimate">Choisis une date et des heures pour voir le coût estimé.</div>
+          <div class="err" id="err" role="alert"></div>
+          <button class="btn primary" type="submit" id="send">Envoyer ma demande</button>
+        </form>
+        <div id="result" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+// Contenu de la page. Pour changer le texte, les services ou les tarifs, modifier cet objet.
+const CONFIG = {
+  prenom: "Alyssa",
+  zone: "Ville-Émard et Côte-Saint-Paul",
+  tel: "",
+  // Adresse Formspree de la forme https://formspree.io/f/xxxxxxxx. Sans elle, la page propose un message à copier.
+  formUrl: "https://formspree.io/f/xbgdbaqw",
+  accroche: "Gardienne avertie, disponible pour les enfants de 3 ans et plus.",
+  tarif: null,
+  tarifSup: 0,
+  minHeures: 0,
+  apropos: [
+    "Je suis à la recherche d'occasions de faire du gardiennage. Je suis disponible pour garder des enfants à partir de 3 ans, selon vos besoins.",
+    "J'ai suivi mon cours de gardienne avertie et je peux vous transmettre mon certificat si vous le souhaitez. Je suis une personne responsable, attentive, patiente et calme. Je prends au sérieux la sécurité des enfants et je m'assure de respecter les consignes, les habitudes et les routines établies par les parents.",
+    "J'aime beaucoup passer du temps avec les enfants et leur faire plaisir avec des activités adaptées à leurs intérêts. J'aime aussi organiser des activités créatives et sportives. Mon objectif est que les enfants passent un bon moment tout en se sentant en sécurité et écoutés.",
+    "N'hésitez pas à me contacter si vous cherchez une gardienne ou si vous souhaitez plus d'information sur l'horaire et le tarif. Ce sera un plaisir de faire connaissance avec vous et vos enfants!"
+  ],
+  services: [
+    "Enfants de 3 ans et plus",
+    "Activités créatives et sportives",
+    "Jeux adaptés aux intérêts de chaque enfant",
+    "Respect des consignes et des routines des parents"
+  ],
+  dispos: [
+    "Horaire à discuter selon vos besoins",
+    "Certificat de gardienne avertie sur demande"
+  ]
+};
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = (n) => String(n).padStart(2, "0");
+const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const todayIso = iso(new Date());
+const fmtDate = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("fr-CA", { weekday: "long", day: "numeric", month: "long" }); };
+const money = (n) => n.toFixed(2).replace(".", ",") + " $";
+
+let prises = [], mine = [], inboxItems = [], docItems = {};
+let dbh = null, myUid = null, isAdmin = false, sel = "", view = new Date(); view.setDate(1);
+
+/* ---------- contenu statique ---------- */
+function paintStatic() {
+  $("#brand").textContent = "Gardiennage " + CONFIG.prenom;
+  $("#eyebrow").textContent = "Gardiennage · " + CONFIG.zone;
+  $("#h1").innerHTML = "Gardienne : <mark>" + esc(CONFIG.prenom) + "</mark>";
+  $("#lead").textContent = CONFIG.accroche;
+  $("#rate").textContent = CONFIG.tarif ? CONFIG.tarif + " $" : "À discuter";
+  $("#ratelist").innerHTML =
+    (CONFIG.tarif ? "<div><dt>Enfant additionnel</dt><dd>+ " + CONFIG.tarifSup + " $ / h</dd></div>" +
+    "<div><dt>Durée minimale</dt><dd>" + CONFIG.minHeures + " h</dd></div>" : "") +
+    "<div><dt>Secteur</dt><dd>" + esc(CONFIG.zone) + "</dd></div>" +
+    (CONFIG.tel ? "<div><dt>Téléphone</dt><dd>" + esc(CONFIG.tel) + "</dd></div>" : "");
+  $("#about").innerHTML = CONFIG.apropos.map((p) => "<p>" + esc(p) + "</p>").join("");
+  $("#services-list").innerHTML = CONFIG.services.map((s) => "<li>" + esc(s) + "</li>").join("");
+  $("#dispos-list").innerHTML = CONFIG.dispos.map((s) => "<li>" + esc(s) + "</li>").join("");
+  $("#foot").textContent = "Gardiennage " + CONFIG.prenom + " · " + CONFIG.zone + ". Une confirmation est envoyée avant chaque rendez-vous.";
+  $("#date").min = todayIso;
+}
+
+/* ---------- calendrier ---------- */
+function takenOn(d) { return prises.filter((p) => p.date === d); }
+function paintCal() {
+  const y = view.getFullYear(), m = view.getMonth();
+  $("#month").textContent = view.toLocaleDateString("fr-CA", { month: "long", year: "numeric" });
+  const first = new Date(y, m, 1);
+  const lead = (first.getDay() + 6) % 7;
+  const days = new Date(y, m + 1, 0).getDate();
+  let h = ["L", "M", "M", "J", "V", "S", "D"].map((d) => '<div class="dow">' + d + "</div>").join("");
+  for (let i = 0; i < lead; i++) h += "<div></div>";
+  for (let d = 1; d <= days; d++) {
+    const key = y + "-" + pad(m + 1) + "-" + pad(d);
+    const past = key < todayIso;
+    const cls = "day" + (takenOn(key).length ? " taken" : "") + (key === sel ? " sel" : "");
+    h += '<button type="button" class="' + cls + '" data-d="' + key + '"' + (past ? " disabled" : "") + ">" + d + "</button>";
+  }
+  $("#cal").innerHTML = h;
+  $("#prev").disabled = view <= new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  paintSlots();
+}
+function paintSlots() {
+  $("#slots").textContent = sel ? fmtDate(sel) : "";
+}
+$("#cal").addEventListener("click", (e) => {
+  const b = e.target.closest(".day"); if (!b || b.disabled) return;
+  sel = b.dataset.d; $("#date").value = sel; paintCal(); estimate();
+});
+$("#prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); paintCal(); });
+$("#next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); paintCal(); });
+$("#date").addEventListener("change", (e) => {
+  sel = e.target.value;
+  if (sel) { const [y, m] = sel.split("-").map(Number); view = new Date(y, m - 1, 1); }
+  paintCal(); estimate();
+});
+
+/* ---------- estimation ---------- */
+function hoursOf(debut, fin) {
+  if (!debut || !fin) return 0;
+  const [a, b] = debut.split(":").map(Number), [c, d] = fin.split(":").map(Number);
+  return ((c * 60 + d) - (a * 60 + b) + 1440) % 1440 / 60;
+}
+function estimate() {
+  const h = hoursOf($("#debut").value, $("#fin").value);
+  if (!$("#date").value || !h) { $("#estimate").textContent = "Choisis une date et des heures pour voir le coût estimé."; return; }
+  if (!CONFIG.tarif) { $("#estimate").innerHTML = "Durée : <b>" + h.toString().replace(".", ",") + " h</b>. Le tarif est confirmé avec la gardienne."; return; }
+  const n = Number($("#enfants").value);
+  const billed = Math.max(h, CONFIG.minHeures);
+  const total = billed * (CONFIG.tarif + (n - 1) * CONFIG.tarifSup);
+  $("#estimate").innerHTML = "Durée : <b>" + h.toString().replace(".", ",") + " h</b>" + (h < CONFIG.minHeures ? " (facturée " + CONFIG.minHeures + " h)" : "") + ". Coût estimé : <b>" + money(total) + "</b>.";
+}
+["debut", "fin", "enfants"].forEach((id) => $("#" + id).addEventListener("input", estimate));
+
+/* ---------- envoi ---------- */
+function buildMessage(r) {
+  return "Bonjour " + CONFIG.prenom + ", c'est " + r.parent + ". Je voudrais réserver une gardienne le " + fmtDate(r.date) + " de " + r.debut + " à " + r.fin + " pour " + r.enfants + " enfant(s) (" + r.ages + ")." + (r.notes ? " " + r.notes : "") + " Mon numéro : " + r.tel + ".";
+}
+$("#form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const r = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    parent: $("#parent").value.trim(), tel: $("#tel").value.trim(), date: $("#date").value,
+    debut: $("#debut").value, fin: $("#fin").value, enfants: Number($("#enfants").value),
+    ages: $("#ages").value.trim(), notes: $("#notes").value.trim(), statut: "attente", creeLe: new Date().toISOString()
+  };
+  const err = $("#err"); err.textContent = "";
+  if (!r.parent || !r.tel || !r.date || !r.ages) { err.textContent = "Remplis ton nom, ton téléphone, la date et l'âge des enfants."; return; }
+  if (r.date < todayIso) { err.textContent = "Choisis une date à partir d'aujourd'hui."; return; }
+  if (!hoursOf(r.debut, r.fin)) { err.textContent = "L'heure de fin doit être différente de l'heure de début."; return; }
+  const btn = $("#send"); btn.disabled = true;
+  let saved = false;
+  if (CONFIG.formUrl && !$("#gotcha").value) {
+    try {
+      const res = await fetch(CONFIG.formUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ _subject: "Demande de gardiennage : " + r.parent, nom: r.parent, telephone: r.tel, date: r.date, debut: r.debut, fin: r.fin, enfants: r.enfants, ages: r.ages, notes: r.notes, message: buildMessage(r) })
+      });
+      saved = res.ok;
+    } catch (x) { saved = false; }
+  }
+  btn.disabled = false;
+  const text = buildMessage(r);
+  const who = CONFIG.tel ? "au " + esc(CONFIG.tel) : "à la gardienne";
+  $("#result").innerHTML = saved
+    ? '<div class="msg ok"><strong>Demande envoyée.</strong><p>' + esc(CONFIG.prenom) + " a reçu ta demande pour le " + esc(fmtDate(r.date)) + ' et te répondra au ' + esc(r.tel) + ' pour confirmer.</p></div>'
+    : '<div class="msg warn"><strong>Ta demande n\'est pas encore envoyée.</strong><p>L\'envoi automatique n\'a pas fonctionné. Copie ce message et envoie-le ' + who + ' :</p><pre id="txt">' + esc(text) + '</pre><button class="btn small" type="button" id="copy">Copier le message</button></div>';
+  const c = $("#copy");
+  if (c) c.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(text); c.textContent = "Copié"; }
+    catch (x) { const r2 = document.createRange(); r2.selectNodeContents($("#txt")); const s = getSelection(); s.removeAllRanges(); s.addRange(r2); c.textContent = "Sélectionné, copie à la main"; }
+  });
+  $("#result").scrollIntoView({ block: "nearest" });
+});
+
+paintStatic(); paintCal(); estimate();
+</script>
+</body>
+</html>
