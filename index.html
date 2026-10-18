@@ -182,7 +182,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: .88rem; border-top: 1
 
   <section id="reserver">
     <h2>Demander une date</h2>
-    <p style="color:var(--muted);margin-top:8px;max-width:40em">Choisis un jour dans le calendrier, remplis le formulaire et la gardienne te répond pour confirmer.</p>
+    <p style="color:var(--muted);margin-top:8px;max-width:40em">Choisis un jour dans le calendrier, remplis le formulaire et la gardienne te répond. Nous passons ensuite vous voir la veille pour nous assurer que tout convient, puis la date est confirmée.</p>
     <div class="book">
       <div>
         <div class="cal">
@@ -235,12 +235,12 @@ const CONFIG = {
   tel: "",
   // Adresse Formspree de la forme https://formspree.io/f/xxxxxxxx. Sans elle, la page propose un message à copier.
   formUrl: "https://formspree.io/f/xbgdbaqw",
-  accroche: "Gardienne avertie, disponible pour les enfants de 3 ans et plus.",
+  accroche: "Gardienne avertie de 13 ans, disponible pour les enfants de 3 ans et plus.",
   tarif: null,
   tarifSup: 0,
   minHeures: 0,
   apropos: [
-    "Je suis à la recherche d'occasions de faire du gardiennage. Je suis disponible pour garder des enfants à partir de 3 ans, selon vos besoins.",
+    "J'ai 13 ans et je suis à la recherche d'occasions de faire du gardiennage. Je suis disponible pour garder des enfants à partir de 3 ans, selon vos besoins.",
     "J'ai suivi mon cours de gardienne avertie et je peux vous transmettre mon certificat si vous le souhaitez. Je suis une personne responsable, attentive, patiente et calme. Je prends au sérieux la sécurité des enfants et je m'assure de respecter les consignes, les habitudes et les routines établies par les parents.",
     "J'aime beaucoup passer du temps avec les enfants et leur faire plaisir avec des activités adaptées à leurs intérêts. J'aime aussi organiser des activités créatives et sportives. Mon objectif est que les enfants passent un bon moment tout en se sentant en sécurité et écoutés.",
     "N'hésitez pas à me contacter si vous cherchez une gardienne ou si vous souhaitez plus d'information sur l'horaire et le tarif. Ce sera un plaisir de faire connaissance avec vous et vos enfants!"
@@ -253,6 +253,7 @@ const CONFIG = {
   ],
   dispos: [
     "Horaire à discuter selon vos besoins",
+    "Nous passons vous voir la veille pour nous assurer que tout convient avant de confirmer",
     "Certificat de gardienne avertie sur demande"
   ]
 };
@@ -371,7 +372,7 @@ $("#form").addEventListener("submit", async (e) => {
   const text = buildMessage(r);
   const who = CONFIG.tel ? "au " + esc(CONFIG.tel) : "à la gardienne";
   $("#result").innerHTML = saved
-    ? '<div class="msg ok"><strong>Demande envoyée.</strong><p>' + esc(CONFIG.prenom) + " a reçu ta demande pour le " + esc(fmtDate(r.date)) + ' et te répondra au ' + esc(r.tel) + ' pour confirmer.</p></div>'
+    ? '<div class="msg ok"><strong>Demande envoyée.</strong><p>' + esc(CONFIG.prenom) + " a reçu ta demande pour le " + esc(fmtDate(r.date)) + ' et te répondra au ' + esc(r.tel) + '. Une visite est prévue la veille avant la confirmation finale.</p></div>'
     : '<div class="msg warn"><strong>Ta demande n\'est pas encore envoyée.</strong><p>L\'envoi automatique n\'a pas fonctionné. Copie ce message et envoie-le ' + who + ' :</p><pre id="txt">' + esc(text) + '</pre><button class="btn small" type="button" id="copy">Copier le message</button></div>';
   const c = $("#copy");
   if (c) c.addEventListener("click", async () => {
